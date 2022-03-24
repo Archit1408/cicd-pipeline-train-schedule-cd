@@ -20,6 +20,7 @@ pipeline {
                         publishers: [
                             sshPublisherDesc(
                                 configName: 'staging',
+                                verbose: true,
                                 sshCredentials: [
                                     username: "$USERNAME",
                                     encryptedPassphrase: "$USERPASS"
@@ -29,8 +30,7 @@ pipeline {
                                         sourceFiles: 'dist/trainSchedule.zip',
                                         removePrefix: 'dist/',
                                         remoteDirectory: '/tmp',
-                                        execCommand: 'sudo yum -y install httpd',
-                                        verbose: true
+                                        execCommand: 'sudo yum -y install httpd'
                                     )
                                 ]
                             )
