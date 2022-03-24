@@ -12,63 +12,18 @@ pipeline {
             when {
                 branch 'master'
             }
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
-                    sshPublisher(
-                        failOnError: false,
-                        continueOnError: true,
-                        publishers: [
-                            sshPublisherDesc(
-                                configName: 'staging',
-                                sshCredentials: [
-                                    username: "$USERNAME",
-                                    encryptedPassphrase: "$USERPASS"
-                                ], 
-                                transfers: [
-                                    sshTransfer(
-                                        sourceFiles: 'var/lib/jenkins/workspace/Train-Schedule_master/dist/trainSchedule.zip',
-                                        removePrefix: 'var/lib/jenkins/workspace/Train-Schedule_master/dist/',
-                                        remoteDirectory: '/tmp',
-                                        execCommand: 'sudo /usr/bin/systemctl stop train-schedule && rm -rf /opt/train-schedule/* && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo /usr/bin/systemctl start train-schedule'
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                }
-            }
-        }
-        stage('DeployToProduction') {
-            when {
-                branch 'master'
-            }
-            steps {
-                input 'Does the staging environment look OK?'
-                milestone(1)
-                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
-                    sshPublisher(
-                        failOnError: true,
-                        continueOnError: false,
-                        publishers: [
-                            sshPublisherDesc(
-                                configName: 'production',
-                                sshCredentials: [
-                                    username: "$USERNAME",
-                                    encryptedPassphrase: "$USERPASS"
-                                ], 
-                                transfers: [
-                                    sshTransfer(
-                                        sourceFiles: '/var/lib/jenkins/workspace/Train-Schedule_master/dist/trainSchedule.zip',
-                                        removePrefix: '/var/lib/jenkins/workspace/Train-Schedule_master/dist/',
-                                        remoteDirectory: '/tmp',
-                                        execCommand: 'unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo /usr/bin/systemctl start train-schedule'
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                }
-            }
-        }
-    }
+           steps {
+		script {
+			echo 'Using remote command over ssh'
+			sh 'echo "Today is:" date'
+			echo '*** Executing remote commands ***'
+	 		sh '''#!/bin/bash
+				date
+				ssh jenkins@54.254.194.4 >> ENDSSH
+				java -version
+			    	date
+			    	cd /tmp
+			    	pwd
+ENDSSH
+}
 }
