@@ -30,7 +30,7 @@ pipeline {
                                         sourceFiles: 'dist/trainSchedule.zip',
                                         removePrefix: 'dist/',
                                         remoteDirectory: '/tmp',
-                                        execCommand: 'sudo mkdir -m 755 /opt/train-schedule && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && ./gradlew build --no-daemon && ./gradlew npm_start --no-daemon'
+                                        execCommand: 'unzip /tmp/trainSchedule.zip -d /opt/train-schedule && ./gradlew build --no-daemon && ./gradlew npm_start --no-daemon'
                                     )
                                 ]
                             )
